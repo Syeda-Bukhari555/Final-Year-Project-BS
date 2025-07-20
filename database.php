@@ -75,37 +75,52 @@ include("config.php");
   </nav>
            <!-- End Navigation -->
 <section class="container py-5">
-  <h2 class="text-center mb-5">Available Rooms in Skardu</h2>
+  <h2 class="text-center mb-5">All Available Rooms</h2>
   <div class="row g-4">
   
     <!-- Room Option 1 -->
-     
      <?php
-     $query = "SELECT * FROM `place_table` WHERE approved = 1 && status = 1";
+include("config.php"); // Ensure DB connection is established
 
-     $run = $conn->query($query);
-     if ($run->num_rows > 0) {
-              while ($row = $run->fetch_assoc()) {
+// Fetch only approved and active places
+$query = "SELECT * FROM place_table WHERE approval = 'approved' AND status = '1'";
+$run = $conn->query($query);
+
+if ($run && $run->num_rows > 0) {
+    while ($row = $run->fetch_assoc()) {
 ?>
-<div class="col-md-4">
-      <div class="card shadow-sm h-100">
-        <img src="slider-r3.jpg" class="card-img-top" alt="Room Image">
-        <div class="card-body">
-          <h5 class="card-title"> <?php echo $row['title']; ?> gggg</h5>
-          <p><strong>Owner:</strong> Ali Khan</p>
-          <p><strong>Price:</strong> Rs. 2,500 / night</p>
-          <p><strong>Facilities:</strong> WiFi, Hot Water, Breakfast</p>
-          <p><strong>Location:</strong> Near Kachura Lake, Skardu</p>
-          
-          <a href="tel:+923001112222" class="btn btn-primary w-100 btn-sm">📞 Contact Owner</a>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <img src="<?php echo $row['main_image']; ?>" alt="Home Section Image">
+            <div class="card-body">
+                <h5 class="card-title"><?php echo $row['title']; ?></h5>
+                <p><strong>Owner:</strong>
+                <?php 
+$queryHost = "SELECT * FROM users WHERE `id` = " . $row['vendor_id'];
+$runHost = $conn->query($queryHost);
+
+if ($runHost && $runHost->num_rows > 0) {
+    while ($rowHost = $runHost->fetch_assoc()) {
+      echo $rowHost['name'];
+
+    }}
+?></p>
+
+    <p><strong>Price:</strong> Rs. <?php echo $row['price']; ?> / night</p>
+<p><strong>Facilities:</strong> <?php echo $row['facilities']; ?></p>
+<p><strong>Location:</strong> <?php echo $row['location']; ?></p>
+                
+                <a href="place-detail.php" class="btn btn-primary w-100 btn-sm">View Details</a>
+            </div>
         </div>
-      </div>
     </div>
 <?php
-      }
-     }
+    }
+} else {
+    echo "<p>No approved and active places found.</p>";
+}
+?>
 
-     ?>
     
 
     <!-- Room Option 2 -->
@@ -125,9 +140,9 @@ include("config.php");
     </div> -->
 
     <!-- Room Option 3 -->
-    <div class="col-md-4">
+    <!-- <div class="col-md-4">
       <div class="card shadow-sm h-100">
-        <img src="slider-r5.jpg" class="card-img-top" alt="Room Image">
+       <img src="slider-r5.jpg" class="card-img-top" alt="Room Image"> 
         <div class="card-body">
           <h5 class="card-title">Family Room in Peaceful Area</h5>
           <p><strong>Owner:</strong> Jameel Ahmed</p>
@@ -138,7 +153,7 @@ include("config.php");
           <a href="tel:+923007778888" class="btn btn-primary w-100 btn-sm">📞 Contact Owner</a>
         </div>
       </div>
-    </div>
+    </div>  -->
 
   </div>
 </section>
