@@ -7,7 +7,7 @@
     <!-- font cdn -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <!-- CSS link -->
-    <link rel="stylesheet" href="Frontendaa.css">
+    <link rel="stylesheet" href="frontendaa.css">
     <!-- Bootstrap link -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -51,14 +51,17 @@
                 <a class="nav-link" href="staying.php">Staying</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="Admin.php">Admin</a>
+                <a class="nav-link" href="login.php">Login</a>
             </li> 
             <li class="nav-item">
+                <a class="nav-link" href="contact.php">Contact Us</a>
+            </li> 
+            <!-- <li class="nav-item">
               <div class="Call">
                 <i class="fa-solid fa-phone"></i>
                 <h5>+92 211 111 255 512</h5>
-              </div>     
-            </li>
+              </div>      
+            </li>-->
           </ul>                  
           </div>
         </div>
@@ -70,23 +73,36 @@
     <h3 class="text-overlay">We Have Lots Of Options For <br> Staying And Parking</h3>
 
     <!-- Selection Bar -->
-    <div class="search-bar mt-4">
-      <select class="dropdown text-center">
-        <option value="">Select Option</option>
-        <option value="Stay">Stay</option>
-        <option value="Park">Park</option>
-      </select>
-      <select class="dropdown text-center">
-        <option value="">Select City</option>
-        <option value="murree">Murree</option>
-        <option value="skardu">Skardu</option>
-        <option value="swat">Swat</option>
-      </select>
-       <button class="search-button">
-        <a href="/Final Uni Project/Images/database.php" class="search-link">Search</a>
-        </button>
-    </div>
-  </div>
+  <?php include 'config.php'; ?>
+
+<form action="database.php" method="GET" class="search-bar mt-4">
+  <select class="dropdown text-center" name="option" required>
+    <option value="">Select Option</option>
+    <option value="Stay">Stay</option>
+    <option value="Park">Park</option>
+  </select>
+
+  <select class="dropdown text-center" name="city" required>
+    <option value="">Select City</option>
+    <?php
+    $query = "SELECT id, name FROM city_table WHERE status = 1";
+    $result = mysqli_query($conn, $query);
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo '<option value="' . htmlspecialchars($row['name']) . '">' . htmlspecialchars($row['name']) . '</option>';
+        }
+    } else {
+        echo '<option disabled>No active cities found</option>';
+    }
+    ?>
+  </select>
+
+  <button class="search-button" type="submit">Search</button>
+</form>
+
+
+
+
 </section>
     <!-- Section 1 Ended  -->
 
@@ -173,41 +189,21 @@
 </section>
       
     </section>
-   <section class="testimonial-section">
+  <section class="testimonial-section">
   <div class="container">
     <h2 class="Reviews">What Our <br> Custo<span class="line">me</span>rs Say</h2>
 
     <div class="swiper mySwiper">
       <div class="swiper-wrapper">
-        <!-- Slides: Each uses flexbox to match height -->
-        <div class="swiper-slide">
-          <div class="testimonial-card d-flex flex-column justify-content-between text-center p-3 h-100">
-            <div class="star-row">
-              <i class="fa-regular fa-star"></i>
-              <i class="fa-regular fa-star"></i>
-              <i class="fa-regular fa-star"></i>
-            </div>
-            <p class="description">Excellent environment and secure parking. Loved the view from my room!</p>
-            <h5 class="p-name">Fatima Khan</h5>
-            <p class="p-location">Islamabad, Pakistan</p>
-            <img src="https://randomuser.me/api/portraits/women/45.jpg" class="user-image" alt="Fatima Khan">
-          </div>
-        </div>
 
-        <div class="swiper-slide">
-          <div class="testimonial-card d-flex flex-column justify-content-between text-center p-3 h-100">
-            <div class="star-row">
-              <i class="fa-regular fa-star"></i>
-              <i class="fa-regular fa-star"></i>
-              <i class="fa-regular fa-star"></i>
-            </div>
-            <p class="description">Staff was polite and everything was clean. Highly recommended!</p>
-            <h5 class="p-name">Ahmed Iqbal</h5>
-            <p class="p-location">Lahore, Pakistan</p>
-            <img src="https://randomuser.me/api/portraits/men/41.jpg" class="user-image" alt="Ahmed Iqbal">
-          </div>
-        </div>
+        <?php
+        include 'config.php';
+        $query = "SELECT * FROM testimonial ORDER BY id DESC";
+        $result = mysqli_query($conn, $query);
 
+        if ($result && mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+        ?>
         <div class="swiper-slide">
           <div class="testimonial-card d-flex flex-column justify-content-between text-center p-3 h-100">
             <div class="star-row">
@@ -215,54 +211,19 @@
               <i class="fa-regular fa-star"></i>
               <i class="fa-regular fa-star"></i>
             </div>
-            <p class="description">Nice rooms and smooth booking process. The snowy views were a bonus!</p>
-            <h5 class="p-name">Sana Riaz</h5>
-            <p class="p-location">Murree, Pakistan</p>
-            <img src="https://randomuser.me/api/portraits/women/48.jpg" class="user-image" alt="Sana Riaz">
+            <p class="description"><?= htmlspecialchars($row['description']) ?></p>
+            <h5 class="p-name"><?= htmlspecialchars($row['name']) ?></h5>
+            <p class="p-location"><?= htmlspecialchars($row['address']) ?></p>
+            <img src="<?= htmlspecialchars($row['image']) ?>" class="user-image" alt="<?= htmlspecialchars($row['name']) ?>">
           </div>
         </div>
+        <?php
+            }
+        } else {
+            echo "<p class='text-center'>No testimonials found.</p>";
+        }
+        ?>
 
-        <div class="swiper-slide">
-          <div class="testimonial-card d-flex flex-column justify-content-between text-center p-3 h-100">
-            <div class="star-row">
-              <i class="fa-regular fa-star"></i>
-              <i class="fa-regular fa-star"></i>
-              <i class="fa-regular fa-star"></i>
-            </div>
-            <p class="description">Perfect for short trips. My car was safe and I felt very welcomed.</p>
-            <h5 class="p-name">Bilal Sheikh</h5>
-            <p class="p-location">Rawalpindi, Pakistan</p>
-            <img src="https://randomuser.me/api/portraits/men/53.jpg" class="user-image" alt="Bilal Sheikh">
-          </div>
-        </div>
-
-        <div class="swiper-slide">
-          <div class="testimonial-card d-flex flex-column justify-content-between text-center p-3 h-100">
-            <div class="star-row">
-              <i class="fa-regular fa-star"></i>
-              <i class="fa-regular fa-star"></i>
-              <i class="fa-regular fa-star"></i>
-            </div>
-            <p class="description">I’ll definitely visit again. The services and location were great!</p>
-            <h5 class="p-name">Areeba Nadeem</h5>
-            <p class="p-location">Karachi, Pakistan</p>
-            <img src="https://randomuser.me/api/portraits/women/49.jpg" class="user-image" alt="Areeba Nadeem">
-          </div>
-        </div>
-
-        <div class="swiper-slide">
-          <div class="testimonial-card d-flex flex-column justify-content-between text-center p-3 h-100">
-            <div class="star-row">
-              <i class="fa-regular fa-star"></i>
-              <i class="fa-regular fa-star"></i>
-              <i class="fa-regular fa-star"></i>
-            </div>
-            <p class="description">Very clean, safe, and well managed. Thumbs up from me!</p>
-            <h5 class="p-name">Hamza Tariq</h5>
-            <p class="p-location">Hunza, Pakistan</p>
-            <img src="https://randomuser.me/api/portraits/men/59.jpg" class="user-image" alt="Hamza Tariq">
-          </div>
-        </div>
       </div>
 
       <!-- Swiper Navigation Arrows -->
@@ -271,6 +232,36 @@
     </div>
   </div>
 </section>
+<section class="submit-review py-5 bg-light">
+  <div class="container">
+    <h3 class="mb-4 text-center">Leave a Review</h3>
+    <form action="submit_testimonial.php" method="POST" enctype="multipart/form-data" class="row g-3">
+
+      <div class="col-md-6">
+        <input type="text" name="name" class="form-control" placeholder="Your Name" required>
+      </div>
+
+      <div class="col-md-6">
+        <input type="text" name="address" class="form-control" placeholder="Your City or Address" required>
+      </div>
+
+      <div class="col-12">
+        <textarea name="description" class="form-control" rows="4" placeholder="Write your review..." required></textarea>
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Upload Image (Optional)</label>
+        <input type="file" name="image" class="form-control">
+      </div>
+
+      <div class="col-12 text-center">
+        <button type="submit" name="submit" class="btn btn-primary">Submit Review</button>
+      </div>
+
+    </form>
+  </div>
+</section>
+
     <section5> 
    <footer>
   <div class="footer container-fluid">
